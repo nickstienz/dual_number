@@ -33,17 +33,6 @@ impl<T: Add<Output = T>> Add for DualNumber<T> {
     }
 }
 
-impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul for DualNumber<T> {
-    type Output = Self;
-
-    fn mul(self, rhs: Self) -> Self::Output {
-        Self {
-            real: self.real * rhs.real,
-            dual: (self.real * rhs.dual) + (self.dual * rhs.real),
-        }
-    }
-}
-
 impl<T: Sub<Output = T>> Sub for DualNumber<T> {
     type Output = Self;
 
@@ -51,6 +40,17 @@ impl<T: Sub<Output = T>> Sub for DualNumber<T> {
         Self {
             real: self.real - rhs.real,
             dual: self.dual - rhs.dual,
+        }
+    }
+}
+
+impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul for DualNumber<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            real: self.real * rhs.real,
+            dual: (self.real * rhs.dual) + (self.dual * rhs.real),
         }
     }
 }
