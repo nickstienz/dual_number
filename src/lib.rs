@@ -6,10 +6,7 @@ pub struct DualNumber<T> {
     dual: T,
 }
 
-impl<T> DualNumber<T>
-where
-    T: Add + Sub + Mul,
-{
+impl<T> DualNumber<T> {
     pub fn new(real: T, dual: T) -> Self {
         Self { real, dual }
     }
