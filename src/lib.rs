@@ -1,6 +1,6 @@
 use std::{
     fmt::{self, Display},
-    ops::{Add, Mul, Sub},
+    ops::{Add, Mul, Neg, Sub},
 };
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -25,15 +25,16 @@ impl<T: Clone + Copy> DualNumber<T> {
     }
 }
 
-impl<T: Display + PartialOrd<i32>> fmt::Display for DualNumber<T> {
+impl<T: Display + PartialOrd<i32> + Neg<Output = T> + Copy + Clone> fmt::Display for DualNumber<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let zero = self.dual == 0;
-        let sign = if self.dual < 0 { "-" } else { "+" };
 
         if zero {
             write!(f, "{}", self.real)
+        } else if self.dual < 0 {
+            write!(f, "({} - {}ɛ)", self.real, -self.dual)
         } else {
-            write!(f, "({} {} {}ɛ)", self.real, sign, self.dual)
+            write!(f, "({} + {}ɛ)", self.real, self.dual)
         }
     }
 }
