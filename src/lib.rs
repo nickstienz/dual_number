@@ -33,7 +33,7 @@ impl<T: Display + PartialOrd<i32>> fmt::Display for DualNumber<T> {
         if zero {
             write!(f, "{}", self.real)
         } else {
-            write!(f, "{} {} {}ɛ", self.real, sign, self.dual)
+            write!(f, "({} {} {}ɛ)", self.real, sign, self.dual)
         }
     }
 }
