@@ -2,5 +2,8 @@
 name = "dual_number"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Simple dual number system"
+repository = "https://github.com/nickstienz/dual_number"
 
 [dependencies]
