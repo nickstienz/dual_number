@@ -1,4 +1,7 @@
-use std::ops::{Add, Mul, Sub};
+use std::{
+    fmt::{self, Display},
+    ops::{Add, Mul, Sub},
+};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct DualNumber<T> {
@@ -19,6 +22,19 @@ impl<T: Clone + Copy> DualNumber<T> {
 
     pub fn get_dual(&self) -> T {
         self.dual
+    }
+}
+
+impl<T: Display + PartialOrd<i32>> fmt::Display for DualNumber<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let zero = self.dual == 0;
+        let sign = if self.dual < 0 { "-" } else { "+" };
+
+        if zero {
+            write!(f, "{}", self.real)
+        } else {
+            write!(f, "{} {} {}ɛ", self.real, sign, self.dual)
+        }
     }
 }
 
