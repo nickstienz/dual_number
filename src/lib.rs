@@ -80,9 +80,7 @@ impl<T: Clone + Copy> DualNumber<T> {
 /// dual number notation like `"(5 + 3ɛ)"` or `"(5 - 3ɛ)"`.
 impl<T: Display + PartialOrd<i32> + Neg<Output = T> + Copy + Clone> fmt::Display for DualNumber<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let zero = self.dual == 0;
-
-        if zero {
+        if self.dual == 0 {
             write!(f, "{}", self.real)
         } else if self.dual < 0 {
             write!(f, "({} - {}ɛ)", self.real, -self.dual)
