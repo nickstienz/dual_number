@@ -78,7 +78,7 @@ impl<T: Clone + Copy> DualNumber<T> {
 ///
 /// If there is a dual part, it will write the number using the normal
 /// dual number notation like `"(5 + 3ɛ)"` or `"(5 - 3ɛ)"`.
-impl<T: Display + PartialOrd<i32> + Neg<Output = T> + Copy + Clone> fmt::Display for DualNumber<T> {
+impl<T: Display + PartialOrd<i32> + Neg<Output = T> + Copy + Clone> Display for DualNumber<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.dual == 0 {
             write!(f, "{}", self.real)
