@@ -166,7 +166,7 @@ mod tests {
     }
 
     #[test]
-    fn test_poly() {
+    fn test_poly_1() {
         // 2x^2 + 5x - 3 | f(4) & f'(4)
         let x = DualNumber::new(4, 1);
 
@@ -176,5 +176,16 @@ mod tests {
 
         let result = c1 * x * x + c2 * x - c3;
         assert_eq!(result, DualNumber::new(49, 21));
+    }
+
+    #[test]
+    fn test_poly_2() {
+        // x^2 + 2 | f(0) & f'(0)
+        let x = DualNumber::new(0, 1);
+
+        let c = DualNumber::new(2, 0);
+
+        let result = x * x + c;
+        assert_eq!(result, DualNumber::new(2, 0));
     }
 }
