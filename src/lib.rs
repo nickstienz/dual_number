@@ -74,7 +74,7 @@ impl<T: Clone + Copy> DualNumber<T> {
 /// Trait implementation for Display.
 ///
 /// If the dual part of the number is 0, it will just write the real part
-/// like any other type of T would. `5i32 -> "5"`
+/// like any other type of `T` would. `5i32 -> "5"`
 ///
 /// If there is a dual part, it will write the number using the normal
 /// dual number notation like `"(5 + 3ɛ)"` or `"(5 - 3ɛ)"`.
