@@ -3,17 +3,24 @@ use std::{
     ops::{Add, Mul, Neg, Sub},
 };
 
-/// Main struct for dual numbers. It holds two values of the same type.
-/// The type `T` must have all the traits defined by each function which
-/// will typically be the numeric types like `i32` and such.
+/// `DualNumber` is the main struct used to work with dual numbers. It holds
+/// two values of the same type. The type `T` must have all the traits defined
+/// by each function which will typically be the numeric types like `i32`
+/// or `f64` and such.
+///
+/// Using dual numbers is as easy as creating a `new` dual number and then operating
+/// on it just like you would any other numeric type. There will also be extra
+/// math functions that can be use on the dual numbers.
 ///
 /// ```
 /// use dual_number::DualNumber;
 ///
-/// let x = DualNumber::new(5, 3);
-/// let y = DualNumber::new(20i8, -8i8);
-/// let z = DualNumber::new(7.9, 0.0);
-/// let w = DualNumber::new(-1, -2);
+/// let x = DualNumber::new(5, 1);
+///
+/// // DualNumber supports (DualNumber * T) but not (T * DualNumber).
+/// // This is in active development!
+/// //let ans = 2 * x * x - 6 * x + -10;
+/// //println!("f(x) = 2x^2 - 6x + -10 | f(5) & f'(5) = {}", ans);
 /// ```
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct DualNumber<T> {
@@ -90,10 +97,10 @@ impl<T: Display + PartialOrd<i32> + Neg<Output = T> + Copy + Clone> Display for 
     }
 }
 
-/// Trait implementation for Add.
+/// Trait implementation for `Add`.
 ///
-/// Adds the rhs real part to the lhs real part
-/// and adds the rhs dual part to the lhs dual part.
+/// Adds the rhs real part to the lhs real part and adds the rhs dual part to
+/// the lhs dual part.
 impl<T: Add<Output = T>> Add for DualNumber<T> {
     type Output = Self;
 
@@ -101,6 +108,20 @@ impl<T: Add<Output = T>> Add for DualNumber<T> {
         Self {
             real: self.real + rhs.real,
             dual: self.dual + rhs.dual,
+        }
+    }
+}
+
+/// Trait implementation for `Add<T>`.
+///
+/// Adds the rhs to the lhs real part and does nothing to the dual part.
+impl<T: Add<Output = T>> Add<T> for DualNumber<T> {
+    type Output = Self;
+
+    fn add(self, rhs: T) -> Self::Output {
+        Self {
+            real: self.real + rhs,
+            dual: self.dual,
         }
     }
 }
@@ -134,6 +155,20 @@ impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul for DualNumber<T> 
     }
 }
 
+/// Trait implementation for `Mul<T>`.
+///
+/// The real part is the lhs real part multiplied by the rhs real part.
+impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul<T> for DualNumber<T> {
+    type Output = Self;
+
+    fn mul(self, rhs: T) -> Self::Output {
+        Self {
+            real: self.real * rhs,
+            dual: self.dual * rhs,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -145,6 +180,14 @@ mod tests {
 
         let result = x + y;
         assert_eq!(result, DualNumber::new(4, 6));
+    }
+
+    #[test]
+    fn test_add_t() {
+        let x = DualNumber::new(3, 2);
+
+        let result = x + 5;
+        assert_eq!(result, DualNumber::new(8, 2));
     }
 
     #[test]
@@ -163,6 +206,14 @@ mod tests {
 
         let result = x * y;
         assert_eq!(result, DualNumber::new(3, 10));
+    }
+
+    #[test]
+    fn test_mul_t() {
+        let x = DualNumber::new(3, 2);
+
+        let result = x * 5;
+        assert_eq!(result, DualNumber::new(15, 10));
     }
 
     #[test]
