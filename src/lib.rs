@@ -17,10 +17,12 @@ use std::{
 ///
 /// let x = DualNumber::new(5, 1);
 ///
-/// // DualNumber supports (DualNumber * T) but not (T * DualNumber).
-/// // This is in active development!
-/// //let ans = 2 * x * x - 6 * x + -10;
-/// //println!("f(x) = 2x^2 - 6x + -10 | f(5) & f'(5) = {}", ans);
+/// let c1 = DualNumber::from_real(2);
+/// let c2 = DualNumber::from_real(6);
+/// let c3 = DualNumber::from_real(10);
+///
+/// let ans = c1 * x * x + c2 * x - c3;
+/// println!("f(x) = 2x^2 + 6x - 10 | f(5) & f'(5) = {}", ans);
 /// ```
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct DualNumber<T> {
@@ -28,7 +30,7 @@ pub struct DualNumber<T> {
     dual: T,
 }
 
-impl<T> DualNumber<T> {
+impl<T: From<i32>> DualNumber<T> {
     /// The new function returns a DualNumber with the given type `T`.
     ///
     /// Both the real and dual part must be the same type in order for the
@@ -41,6 +43,20 @@ impl<T> DualNumber<T> {
     /// ```
     pub fn new(real: T, dual: T) -> Self {
         Self { real, dual }
+    }
+
+    pub fn from_real(real: T) -> Self {
+        Self {
+            real,
+            dual: 0.into(),
+        }
+    }
+
+    pub fn from_dual(dual: T) -> Self {
+        Self {
+            real: 0.into(),
+            dual,
+        }
     }
 }
 
@@ -112,20 +128,6 @@ impl<T: Add<Output = T>> Add for DualNumber<T> {
     }
 }
 
-/// Trait implementation for `Add<T>`.
-///
-/// Adds the rhs to the lhs real part and does nothing to the dual part.
-impl<T: Add<Output = T>> Add<T> for DualNumber<T> {
-    type Output = Self;
-
-    fn add(self, rhs: T) -> Self::Output {
-        Self {
-            real: self.real + rhs,
-            dual: self.dual,
-        }
-    }
-}
-
 /// Trait implementation for Sub.
 ///
 /// Subtracts the lhs real part from the rhs real part
@@ -155,20 +157,6 @@ impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul for DualNumber<T> 
     }
 }
 
-/// Trait implementation for `Mul<T>`.
-///
-/// The real part is the lhs real part multiplied by the rhs real part.
-impl<T: Mul<Output = T> + Add<Output = T> + Copy + Clone> Mul<T> for DualNumber<T> {
-    type Output = Self;
-
-    fn mul(self, rhs: T) -> Self::Output {
-        Self {
-            real: self.real * rhs,
-            dual: self.dual * rhs,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -180,14 +168,6 @@ mod tests {
 
         let result = x + y;
         assert_eq!(result, DualNumber::new(4, 6));
-    }
-
-    #[test]
-    fn test_add_t() {
-        let x = DualNumber::new(3, 2);
-
-        let result = x + 5;
-        assert_eq!(result, DualNumber::new(8, 2));
     }
 
     #[test]
@@ -206,14 +186,6 @@ mod tests {
 
         let result = x * y;
         assert_eq!(result, DualNumber::new(3, 10));
-    }
-
-    #[test]
-    fn test_mul_t() {
-        let x = DualNumber::new(3, 2);
-
-        let result = x * 5;
-        assert_eq!(result, DualNumber::new(15, 10));
     }
 
     #[test]
